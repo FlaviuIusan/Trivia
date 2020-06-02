@@ -9,12 +9,19 @@ import androidx.annotation.Nullable;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.util.List;
 
 public class CommunicationService extends Service {
 
 
     PrintWriter send;
     BufferedReader get;
+
+    List<String> listaMesaje;
+
+    public void setListaMesaje(List<String> listaMesaje){
+        this.listaMesaje = listaMesaje;
+    }
 
     public void setSentObj(PrintWriter send){
         this.send = send;
@@ -43,9 +50,10 @@ public class CommunicationService extends Service {
 
     public void listen(){
 
-        ListenToServer listenRun = new ListenToServer(get);
+        ListenToServer listenRun = new ListenToServer(get, listaMesaje);
         Thread listenToServer = new Thread(listenRun);
         listenToServer.start();
+        listenToServer.interrupt();
     }
 
     public void send(String message){

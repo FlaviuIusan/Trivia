@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,6 +24,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
+import java.util.Arrays;
 
 public class PlayActivity extends AppCompatActivity {
 
@@ -29,6 +33,10 @@ public class PlayActivity extends AppCompatActivity {
     CommunicationService communicationService;
     private PrintWriter send = null;
     private BufferedReader get = null;
+
+    List<String> listaMesaje = Arrays.asList("Jocul a inceput !!!", "Pregatestete de joc !!!");
+    MesajeAdapter mesajeAdapter;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +47,8 @@ public class PlayActivity extends AppCompatActivity {
 
         startCommunication();
 
+        createMesajeView();
+
         findViewById(R.id.buttonSend).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,6 +56,7 @@ public class PlayActivity extends AppCompatActivity {
                 String mesaj = editTextChat.getText().toString();
                 try{
                     communicationService.send(mesaj);
+                    communicationService.listen();
                 }
                 catch (Exception ex){
                     Log.e("send", ex.toString());
@@ -86,6 +97,7 @@ public class PlayActivity extends AppCompatActivity {
                 CommunicationService.LocalBinder binder = (CommunicationService.LocalBinder) service;
                 binder.getService().setGetObj(get);
                 binder.getService().setSentObj(send);
+                binder.getService().setListaMesaje(listaMesaje);
                 communicationService = binder.getService();
                 Log.e("creeare", "AICICICICICICICICICI");
 
@@ -100,5 +112,14 @@ public class PlayActivity extends AppCompatActivity {
 
         Intent intent = new Intent(getApplicationContext(), CommunicationService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE); // unbindService(connection);
+    }
+
+    public void createMesajeView(){
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mesajeAdapter = new MesajeAdapter();
+        mesajeAdapter.setListaMesaje(listaMesaje);
+        recyclerView.setAdapter(mesajeAdapter);
     }
 }
