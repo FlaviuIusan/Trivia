@@ -1,24 +1,30 @@
 package com.example.fazan;
 
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 
 import androidx.annotation.Nullable;
 
-import java.security.Provider;
-import java.util.List;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 
 public class CommunicationService extends Service {
 
 
-    private IBinder iBinder= new LocalBinder();
+    PrintWriter send;
+    BufferedReader get;
+
+    public void setSentObj(PrintWriter send){
+        this.send = send;
+    }
+
+    public void setGetObj(BufferedReader get){
+        this.get = get;
+    }
+
+    private final IBinder iBinder= new LocalBinder();
 
     public class LocalBinder extends Binder {
         CommunicationService getService() {
@@ -27,16 +33,24 @@ public class CommunicationService extends Service {
         }
     }
 
-    private Looper serviceLooper;
-    private ServiceHandler serviceHandler;
-
-    private final class ServiceHandler extends Handler{
-
-    }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+
         return iBinder;
+    }
+
+    public void listen(){
+
+        ListenToServer listenRun = new ListenToServer(get);
+        Thread listenToServer = new Thread(listenRun);
+        listenToServer.start();
+    }
+
+    public void send(String message){
+        SendToServer sendRun = new SendToServer(send, message);
+        Thread sendToServer = new Thread(sendRun);
+        sendToServer.start();
     }
 }
