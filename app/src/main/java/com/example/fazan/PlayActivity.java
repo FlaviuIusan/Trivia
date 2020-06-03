@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.arch.core.executor.TaskExecutor;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,8 +57,8 @@ public class PlayActivity extends AppCompatActivity {
                 EditText editTextChat = findViewById(R.id.editTextChat);
                 String mesaj = editTextChat.getText().toString();
                 try{
+                    communicationService.listen(); // se creeaza prea multe threaduri de ascultat.
                     communicationService.send(mesaj);
-                    communicationService.listen();
                     mesajeAdapter.notifyDataSetChanged();
                 }
                 catch (Exception ex){
@@ -67,6 +68,17 @@ public class PlayActivity extends AppCompatActivity {
         });
 
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @SuppressLint("StaticFieldLeak")

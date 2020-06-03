@@ -30,7 +30,7 @@ public class ListenToServer implements Runnable {
                 Log.e("primit ascultat", "EROARE" + e.toString());
             }
            try {
-               Thread.sleep(500);
+               Thread.sleep(1000);
            }catch (Exception ex){
                Log.e("thread listen", "failed to sleep");
            }

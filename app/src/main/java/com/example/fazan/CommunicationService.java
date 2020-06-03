@@ -47,29 +47,8 @@ public class CommunicationService extends Service {
         }
     }
 
-    Looper serviceLooper;
-    ServiceHandler serviceHandler;
-    Thread listenToServer;
-
-    private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-                if(msg.arg1 == 1) {
-                    ListenToServer listenRun = new ListenToServer(get, listaMesaje);
-                    listenToServer = new Thread(listenRun);
-                    listenToServer.start();
-                    Log.e("message 1", "asculttttt");
-                }
-                if(msg.arg1 == 2){
 
 
-                }
-        }
-    }
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -77,38 +56,21 @@ public class CommunicationService extends Service {
         return iBinder;
     }
 
-    @Override
-    public void onCreate() {
 
-        HandlerThread thread = new HandlerThread("ServiceStartArguments",
-                HandlerThread.MIN_PRIORITY    );
-        thread.start();
 
-        serviceLooper = thread.getLooper();
-        serviceHandler = new ServiceHandler(serviceLooper);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Message msg = serviceHandler.obtainMessage();
-        msg.arg1 = 1;
-        serviceHandler.sendMessage(msg);
-        Log.e("MyService", "Munca a inceput pentru id:" + startId);
-
-        return START_STICKY;
-    }
 
     public void listen(){
-        Message msg = serviceHandler.obtainMessage();
-        msg.arg1 = 1;
-        serviceHandler.sendMessage(msg);
+        ListenToServer listenRun = new ListenToServer(get, listaMesaje);
+        Thread listenToServer = new Thread(listenRun);
+        listenToServer.start();
+
     }
 
     public void send(String message){
 
-        Message msg = serviceHandler.obtainMessage();
-        msg.arg1 = 2;
-        msg.obj = message;
-        serviceHandler.sendMessage(msg);
+
+        SendToServer sendRun = new SendToServer(send, message);
+        Thread sendToServer = new Thread(sendRun);
+        sendToServer.start();
     }
 }
