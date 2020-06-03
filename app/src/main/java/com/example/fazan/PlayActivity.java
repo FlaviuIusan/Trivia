@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 
@@ -34,7 +35,7 @@ public class PlayActivity extends AppCompatActivity {
     private PrintWriter send = null;
     private BufferedReader get = null;
 
-    List<String> listaMesaje = Arrays.asList("Jocul a inceput !!!", "Pregatestete de joc !!!");
+    List<String> listaMesaje =  new ArrayList<String>();
     MesajeAdapter mesajeAdapter;
 
 
@@ -43,6 +44,7 @@ public class PlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play_activity);
 
+        listaMesaje.add("Jocul a inceput !!!");
         connectToServer();
 
         startCommunication();
@@ -57,6 +59,7 @@ public class PlayActivity extends AppCompatActivity {
                 try{
                     communicationService.send(mesaj);
                     communicationService.listen();
+                    mesajeAdapter.notifyDataSetChanged();
                 }
                 catch (Exception ex){
                     Log.e("send", ex.toString());

@@ -16,9 +16,16 @@ public class ListenToServer implements Runnable {
     @Override
     public void run() {
         try {
-            String line = get.readLine();
-            Log.e("mesaj primit", line);
+            String line;
+            while(!get.ready()){
+
+            }
+            line = get.readLine();
+            Log.e("primit mesaj", "Linie " + line);
             listaMesaje.add(line);
+            for(int i = 0; i<listaMesaje.size(); ++i) {
+                Log.e("elemente lista", listaMesaje.get(i));
+            }
 
         } catch (Exception e) {
             Log.e("primit ascultat", "EROARE" + e.toString());

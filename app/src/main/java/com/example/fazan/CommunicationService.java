@@ -53,7 +53,6 @@ public class CommunicationService extends Service {
         ListenToServer listenRun = new ListenToServer(get, listaMesaje);
         Thread listenToServer = new Thread(listenRun);
         listenToServer.start();
-        listenToServer.interrupt();
     }
 
     public void send(String message){
