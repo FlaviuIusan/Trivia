@@ -15,22 +15,26 @@ public class ListenToServer implements Runnable {
     }
     @Override
     public void run() {
-        try {
-            String line;
-            while(!get.ready()){
 
-            }
-            line = get.readLine();
-            Log.e("primit mesaj", "Linie " + line);
-            listaMesaje.add(line);
-            for(int i = 0; i<listaMesaje.size(); ++i) {
-                Log.e("elemente lista", listaMesaje.get(i));
-            }
+        String line;
 
-        } catch (Exception e) {
-            Log.e("primit ascultat", "EROARE" + e.toString());
+        while(true) {
+            try {
+                line = get.readLine();
+                if(line!=null) {
+
+                    Log.e("primit mesaj", "Linie " + line);
+                    listaMesaje.add(line);
+                }
+            } catch (Exception e) {
+                Log.e("primit ascultat", "EROARE" + e.toString());
+            }
+           try {
+               Thread.sleep(500);
+           }catch (Exception ex){
+               Log.e("thread listen", "failed to sleep");
+           }
         }
-
     }
 }
 

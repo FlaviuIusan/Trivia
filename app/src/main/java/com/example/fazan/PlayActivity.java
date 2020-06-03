@@ -32,9 +32,8 @@ public class PlayActivity extends AppCompatActivity {
 
     Socket socket;
     CommunicationService communicationService;
-    private PrintWriter send = null;
-    private BufferedReader get = null;
-
+    PrintWriter send;
+    BufferedReader get;
     List<String> listaMesaje =  new ArrayList<String>();
     MesajeAdapter mesajeAdapter;
 
@@ -47,9 +46,9 @@ public class PlayActivity extends AppCompatActivity {
         listaMesaje.add("Jocul a inceput !!!");
         connectToServer();
 
-        startCommunication();
-
         createMesajeView();
+
+        startCommunication();
 
         findViewById(R.id.buttonSend).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +102,6 @@ public class PlayActivity extends AppCompatActivity {
                 binder.getService().setListaMesaje(listaMesaje);
                 communicationService = binder.getService();
                 Log.e("creeare", "AICICICICICICICICICI");
-
 
             }
 
