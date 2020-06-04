@@ -28,6 +28,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class PlayActivity extends AppCompatActivity {
 
@@ -51,15 +53,14 @@ public class PlayActivity extends AppCompatActivity {
 
         startCommunication();
 
+
         findViewById(R.id.buttonSend).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EditText editTextChat = findViewById(R.id.editTextChat);
                 String mesaj = editTextChat.getText().toString();
                 try{
-                    communicationService.listen(); // se creeaza prea multe threaduri de ascultat.
                     communicationService.send(mesaj);
-                    mesajeAdapter.notifyDataSetChanged();
                 }
                 catch (Exception ex){
                     Log.e("send", ex.toString());
@@ -67,23 +68,10 @@ public class PlayActivity extends AppCompatActivity {
             }
         });
 
-
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @SuppressLint("StaticFieldLeak")
     public void connectToServer(){
-
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -98,7 +86,6 @@ public class PlayActivity extends AppCompatActivity {
                 return null;
             }
         }.execute();
-
     }
 
     public void startCommunication(){
@@ -124,6 +111,7 @@ public class PlayActivity extends AppCompatActivity {
         };
 
         Intent intent = new Intent(getApplicationContext(), CommunicationService.class);
+        startService(intent);
         bindService(intent, connection, Context.BIND_AUTO_CREATE); // unbindService(connection);
     }
 

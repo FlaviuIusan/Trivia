@@ -48,7 +48,80 @@ public class CommunicationService extends Service {
     }
 
 
+    private final class listenRun implements Runnable{
 
+        @Override
+        public void run() {
+            while(shouldRun) {
+                try {
+                    String line;
+                    line = get.readLine();
+                    if (line != null) {
+
+                        Log.e("primit mesaj", "Linie " + line);
+                        listaMesaje.add(line);
+                    }
+                    else {
+                        Log.e("ascult", "mesajul a fos null");
+                    }
+
+
+                } catch (Exception e) {
+                    Log.e("Exceptie primit", e.toString());
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private final class sendRun implements Runnable{
+
+        @Override
+        public void run() {
+            try {
+                send.println(mesaj);
+                Log.e("trimis", "S-a trimis");
+
+            } catch (Exception e) {
+                Log.e("erroare trimis", "Nu s-a trimis");
+            }
+        }
+    }
+
+    Looper serviceLooper;
+    ServiceHandler serviceHandler;
+    Thread listenToServerT;
+    Thread sendToServerT;
+    boolean shouldRun;
+    String mesaj;
+
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if(msg.arg1 == 1) {
+                listenToServerT = new Thread(new listenRun());
+                Log.e("message 1", "incep asculttttt");
+                listenToServerT.start();
+            }
+            if(msg.arg1 == 2){
+                shouldRun=false;
+                mesaj = (String) msg.obj;
+                sendToServerT = new Thread(new sendRun());
+                sendToServerT.start();
+                Log.e("message 2", "trimis");
+                shouldRun=true;
+
+            }
+        }
+    }
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -56,21 +129,39 @@ public class CommunicationService extends Service {
         return iBinder;
     }
 
+    @Override
+    public void onCreate() {
 
+        HandlerThread thread = new HandlerThread("ServiceStartArguments",
+                HandlerThread.MIN_PRIORITY    );
+        thread.start();
 
+        serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Message msg = serviceHandler.obtainMessage();
+        msg.arg1 = 1;
+        shouldRun=true;
+        Log.e("MyService", "Munca a inceput pentru id:" + startId);
+        serviceHandler.sendMessage(msg);
+
+        return START_STICKY;
+    }
 
     public void listen(){
-        ListenToServer listenRun = new ListenToServer(get, listaMesaje);
-        Thread listenToServer = new Thread(listenRun);
-        listenToServer.start();
-
+        Message msg = serviceHandler.obtainMessage();
+        msg.arg1 = 1;
+        serviceHandler.sendMessage(msg);
     }
 
     public void send(String message){
 
-
-        SendToServer sendRun = new SendToServer(send, message);
-        Thread sendToServer = new Thread(sendRun);
-        sendToServer.start();
+        Message msg = serviceHandler.obtainMessage();
+        msg.arg1 = 2;
+        msg.obj = message;
+        serviceHandler.sendMessage(msg);
     }
 }
