@@ -55,14 +55,13 @@ public class CommunicationService extends Service {
             while(shouldRun) {
                 try {
                     String line;
-                    line = get.readLine();
-                    if (line != null) {
+                    if(get != null) {
+                        if ((line = get.readLine()) != null) {
 
-                        Log.e("primit mesaj", "Linie " + line);
-                        listaMesaje.add(line);
-                    }
-                    else {
-                        Log.e("ascult", "mesajul a fos null");
+                            Log.e("primit mesaj", "Linie " + line);
+                            listaMesaje.add(line);
+                        }
+                            Log.e("ascult", "mesajul a fos null");
                     }
 
 
@@ -109,16 +108,14 @@ public class CommunicationService extends Service {
             if(msg.arg1 == 1) {
                 listenToServerT = new Thread(new listenRun());
                 Log.e("message 1", "incep asculttttt");
+                shouldRun = true;
                 listenToServerT.start();
             }
             if(msg.arg1 == 2){
-                shouldRun=false;
                 mesaj = (String) msg.obj;
                 sendToServerT = new Thread(new sendRun());
                 sendToServerT.start();
                 Log.e("message 2", "trimis");
-                shouldRun=true;
-
             }
         }
     }
@@ -142,11 +139,9 @@ public class CommunicationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Message msg = serviceHandler.obtainMessage();
-        msg.arg1 = 1;
-        shouldRun=true;
-        Log.e("MyService", "Munca a inceput pentru id:" + startId);
-        serviceHandler.sendMessage(msg);
+        Message msg2 = new Message();
+        msg2.arg1 = 1;
+        serviceHandler.sendMessage(msg2);
 
         return START_STICKY;
     }

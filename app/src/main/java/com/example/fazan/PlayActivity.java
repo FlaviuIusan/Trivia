@@ -51,6 +51,19 @@ public class PlayActivity extends AppCompatActivity {
 
         createMesajeView();
 
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mesajeAdapter.notifyDataSetChanged();
+                    }
+                });
+
+            }
+        }, 500, 1000);
+
         startCommunication();
 
 
@@ -111,6 +124,7 @@ public class PlayActivity extends AppCompatActivity {
         };
 
         Intent intent = new Intent(getApplicationContext(), CommunicationService.class);
+
         startService(intent);
         bindService(intent, connection, Context.BIND_AUTO_CREATE); // unbindService(connection);
     }
