@@ -1,9 +1,11 @@
 package com.example.fazan;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.arch.core.executor.TaskExecutor;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,18 +28,15 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class PlayActivity extends AppCompatActivity {
 
     Socket socket;
-    CommunicationService communicationService;
     PrintWriter send;
     BufferedReader get;
     List<String> listaMesaje =  new ArrayList<String>();
     MesajeAdapter mesajeAdapter;
+    CommunicationService communicationService;
 
 
     @Override
@@ -47,25 +45,14 @@ public class PlayActivity extends AppCompatActivity {
         setContentView(R.layout.play_activity);
 
         listaMesaje.add("Jocul a inceput !!!");
+
         connectToServer();
 
         createMesajeView();
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mesajeAdapter.notifyDataSetChanged();
-                    }
-                });
-
-            }
-        }, 500, 1000);
+        listenToBroadcasts();
 
         startCommunication();
-
 
         findViewById(R.id.buttonSend).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +69,8 @@ public class PlayActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     @SuppressLint("StaticFieldLeak")
     public void connectToServer(){
@@ -100,6 +89,25 @@ public class PlayActivity extends AppCompatActivity {
             }
         }.execute();
     }
+
+
+    public void createMesajeView(){
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mesajeAdapter = new MesajeAdapter();
+        mesajeAdapter.setListaMesaje(listaMesaje);
+        recyclerView.setAdapter(mesajeAdapter);
+    }
+
+
+    public void listenToBroadcasts(){
+        BroadcastReceiver BroadcastReceiver = new PlayActivityBReceiver(mesajeAdapter);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("RefreshMesajeView");
+        PlayActivity.this.registerReceiver(BroadcastReceiver, filter);
+    }
+
 
     public void startCommunication(){
 
@@ -124,17 +132,7 @@ public class PlayActivity extends AppCompatActivity {
         };
 
         Intent intent = new Intent(getApplicationContext(), CommunicationService.class);
-
-        startService(intent);
         bindService(intent, connection, Context.BIND_AUTO_CREATE); // unbindService(connection);
     }
 
-    public void createMesajeView(){
-
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mesajeAdapter = new MesajeAdapter();
-        mesajeAdapter.setListaMesaje(listaMesaje);
-        recyclerView.setAdapter(mesajeAdapter);
-    }
 }

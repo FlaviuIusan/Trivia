@@ -52,16 +52,20 @@ public class CommunicationService extends Service {
 
         @Override
         public void run() {
-            while(shouldRun) {
+            while(true) {
                 try {
                     String line;
                     if(get != null) {
                         if ((line = get.readLine()) != null) {
 
-                            Log.e("primit mesaj", "Linie " + line);
+                            Log.e("listenRunFunc", "Mesajul primit este " + line);
                             listaMesaje.add(line);
+
+                            Intent intent = new Intent();
+                            intent.setAction("RefreshMesajeView");
+                            sendBroadcast(intent);
                         }
-                            Log.e("ascult", "mesajul a fos null");
+                            Log.e("listenRunFunc", "Mesajul a fos null");
                     }
 
 
@@ -83,7 +87,7 @@ public class CommunicationService extends Service {
         public void run() {
             try {
                 send.println(mesaj);
-                Log.e("trimis", "S-a trimis");
+                Log.e("sendRunFunc", "S-a trimis");
 
             } catch (Exception e) {
                 Log.e("erroare trimis", "Nu s-a trimis");
@@ -91,72 +95,29 @@ public class CommunicationService extends Service {
         }
     }
 
-    Looper serviceLooper;
-    ServiceHandler serviceHandler;
     Thread listenToServerT;
     Thread sendToServerT;
-    boolean shouldRun;
     String mesaj;
 
-    private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            if(msg.arg1 == 1) {
-                listenToServerT = new Thread(new listenRun());
-                Log.e("message 1", "incep asculttttt");
-                shouldRun = true;
-                listenToServerT.start();
-            }
-            if(msg.arg1 == 2){
-                mesaj = (String) msg.obj;
-                sendToServerT = new Thread(new sendRun());
-                sendToServerT.start();
-                Log.e("message 2", "trimis");
-            }
-        }
-    }
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
 
+        listen();
         return iBinder;
     }
 
-    @Override
-    public void onCreate() {
-
-        HandlerThread thread = new HandlerThread("ServiceStartArguments",
-                HandlerThread.MIN_PRIORITY    );
-        thread.start();
-
-        serviceLooper = thread.getLooper();
-        serviceHandler = new ServiceHandler(serviceLooper);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Message msg2 = new Message();
-        msg2.arg1 = 1;
-        serviceHandler.sendMessage(msg2);
-
-        return START_STICKY;
-    }
-
     public void listen(){
-        Message msg = serviceHandler.obtainMessage();
-        msg.arg1 = 1;
-        serviceHandler.sendMessage(msg);
+        listenToServerT = new Thread(new listenRun());
+        Log.e("listenFunc", "incep asculttttt");
+        listenToServerT.start();
     }
 
-    public void send(String message){
+    public void send(String mesaj){
 
-        Message msg = serviceHandler.obtainMessage();
-        msg.arg1 = 2;
-        msg.obj = message;
-        serviceHandler.sendMessage(msg);
+        this.mesaj = mesaj;
+        sendToServerT = new Thread(new sendRun());
+        sendToServerT.start();
+        Log.e("sendFunction", "S-a trimis");
     }
 }
