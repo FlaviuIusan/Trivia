@@ -29,23 +29,6 @@ public class LeaderboardsActivity extends AppCompatActivity {
     List<String> listaScoruri =  new ArrayList<String>();
     MesajeAdapter topAdapter;
 
-    public class User {
-        public String name;
-        public int score;
-
-        public User(String name, int score){
-            this.name = name;
-            this.score = score;
-        }
-
-        public User(User user){
-            this.name = user.name;
-            this.score = user.score;
-        }
-    }
-
-    User user;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
