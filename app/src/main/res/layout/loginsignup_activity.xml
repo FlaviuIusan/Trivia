@@ -7,37 +7,45 @@
     android:gravity="center"
     android:orientation="vertical">
 
-
-    <Button
-        android:id="@+id/buttonLoginRegister"
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/EditTextUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login/Register"
+        android:text="Username"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4"/>
+        app:layout_constraintVertical_bias="0.2"/>
 
-    <Button
-        android:id="@+id/buttonPlay"
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/EditTextPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Play"
+        android:text="Password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonLoginRegister" />
+        app:layout_constraintTop_toBottomOf="@id/EditTextUsername" />
 
     <Button
-        android:id="@+id/buttonLeaderboards"
+        android:id="@+id/buttonLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Leaderboards"
+        android:text="Login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonPlay" />
+        app:layout_constraintTop_toBottomOf="@id/EditTextPassword" />
 
+    <Button
+        android:id="@+id/buttonSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Sign Up"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttonLogin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
