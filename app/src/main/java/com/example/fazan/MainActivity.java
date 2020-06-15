@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     User user;
     Credentials userCredentials;
-
+    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    final DatabaseReference databaseReference = database.getReference();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,44 +41,16 @@ public class MainActivity extends AppCompatActivity {
 
         user = new User();
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference databaseReference = database.getReference();
-
         findViewById(R.id.buttonPlay).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(user.userId!=null) {
+                if(user.userId.compareTo("")!=0) {
+                    Log.e("Data user", user.username + " " + user.userId);
 
-                    Log.e("Userid", user.userId);
-
-                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            Log.e("DataChange", "am intrat");
-                            if (dataSnapshot.child("users").hasChild(user.userId)) {
-                                user.score = (long) dataSnapshot.child("users").child(user.userId).child("score").getValue();
-                                user.username = (String) dataSnapshot.child("users").child(user.userId).child("username").getValue();
-
-                            } else {
-                                Log.e("else", "else else");
-                                databaseReference.child("users").child(user.userId).setValue(new User(user.userId, 0, null));
-                                user.username = user.userId;
-                                user.score = 0;
-                            }
-                            Log.e("Data user", user.username + " " + user.userId);
-
-                            Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-                            intent.putExtra("User Data", user);
-                            startActivity(intent);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
+                    Intent intent = new Intent(MainActivity.this, PlayActivity.class);
+                    intent.putExtra("User Data", user);
+                    startActivity(intent);
                 }
                 else{
                     Toast.makeText(MainActivity.this, "Trebuie sa te conectezi mai intai !!!", Toast.LENGTH_SHORT).show();
@@ -129,6 +102,27 @@ public class MainActivity extends AppCompatActivity {
                                             public void onSuccess(UserProfile information) {
                                                 user.userId = information.getId();
                                                 Log.e("User Id", user.userId);
+
+                                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if (dataSnapshot.child("users").hasChild(user.userId)) {
+                                                            user.score = (long) dataSnapshot.child("users").child(user.userId).child("score").getValue();
+                                                            user.username = (String) dataSnapshot.child("users").child(user.userId).child("username").getValue();
+
+                                                        } else {
+                                                            Log.e("else", "else else");
+                                                            databaseReference.child("users").child(user.userId).setValue(new User(user.userId, 0, null));
+                                                            user.username = user.userId;
+                                                            user.score = 0;
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
                                             }
 
                                             @Override
@@ -143,6 +137,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.buttonAccountSettings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(user.userId.compareTo("")!=0) {
+                    Intent intent = new Intent(MainActivity.this, AccountSettingsActivity.class);
+                    intent.putExtra("Username", user.username);
+                    startActivityForResult(intent, 1);
+                }else{
+                    Toast.makeText(MainActivity.this, "Trebuie sa te conectezi mai intai !!!", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(data != null) {
+            Bundle results = data.getExtras();
+            user.username = results.getString("Username");
+            Log.e("Result", user.username);
+            databaseReference.child("users").child(user.userId).child("username").setValue(user.username);
+        }
+
+    }
 }
