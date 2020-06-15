@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Fazan</string>
+    <string name="com_auth0_client_id">IHxMmE8gIcAivXgC59qjGof28W9t1L6e</string>
+    <string name="com_auth0_domain">dev-rt4c3v5j.eu.auth0.com</string>
 </resources>

@@ -26,6 +26,12 @@ public class CommunicationService extends Service {
 
     List<String> listaMesaje;
 
+    User user;
+
+    public void setUser(User user){
+        this.user = user;
+    }
+
     public void setListaMesaje(List<String> listaMesaje){
         this.listaMesaje = listaMesaje;
     }
@@ -81,13 +87,22 @@ public class CommunicationService extends Service {
         }
     }
 
+    Boolean firstMessage = true;
+
     private final class sendRun implements Runnable{
 
         @Override
         public void run() {
             try {
-                send.println(mesaj);
-                Log.e("sendRunFunc", "S-a trimis");
+                if(firstMessage){
+                    send.println(user.userId + "- " + user.username + ": " + mesaj);
+                    Log.e("sendRunFunc", "S-a trimis" + user.username);
+                    firstMessage = false;
+                }
+                else {
+                    send.println(user.username + ": " + mesaj);
+                    Log.e("sendRunFunc", "S-a trimis" + user.username);
+                }
 
             } catch (Exception e) {
                 Log.e("erroare trimis", "Nu s-a trimis");

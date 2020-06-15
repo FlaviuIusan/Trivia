@@ -1,17 +1,27 @@
 package com.example.fazan;
 
-public class User {
+import java.io.Serializable;
 
-    public String name;
-    public int score;
+public class User implements Serializable {
 
-    public User(String name, int score){
-        this.name = name;
+    public String username="";
+    public long score=0;
+    public String userId="";
+
+    public User(){
+        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+    }
+
+    public User(String userName, long score, String userId){
+        this.username = userName;
         this.score = score;
+        this.userId = userId;
     }
 
     public User(User user){
-        this.name = user.name;
+        this.username = user.username;
         this.score = user.score;
+        this.userId = user.userId;
     }
+
 }

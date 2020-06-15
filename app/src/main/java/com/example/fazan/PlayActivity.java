@@ -37,12 +37,18 @@ public class PlayActivity extends AppCompatActivity {
     List<String> listaMesaje =  new ArrayList<String>();
     MesajeAdapter mesajeAdapter;
     CommunicationService communicationService;
+    User user;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play_activity);
+
+        Bundle extras = getIntent().getExtras();
+        user = (User) extras.getSerializable("User Data");
+
+        Toast.makeText(PlayActivity.this, user.username + user.score, Toast.LENGTH_SHORT).show();
 
         listaMesaje.add("Jocul a inceput !!!");
 
@@ -78,7 +84,7 @@ public class PlayActivity extends AppCompatActivity {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    socket = new Socket("192.168.0.106", 8000);
+                    socket = new Socket("192.168.0.110", 8888);
                     send = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
                     get = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -120,6 +126,7 @@ public class PlayActivity extends AppCompatActivity {
                 binder.getService().setGetObj(get);
                 binder.getService().setSentObj(send);
                 binder.getService().setListaMesaje(listaMesaje);
+                binder.getService().setUser(user);
                 communicationService = binder.getService();
                 Log.e("creeare", "AICICICICICICICICICI");
 
