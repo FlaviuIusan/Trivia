@@ -40,7 +40,6 @@ public class LeaderboardsActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference();
 
-        //citire baza de date si afisare top 10;
         Query myTopUsersQuery = databaseReference.child("users").orderByChild("score").limitToLast(10);
         myTopUsersQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -58,27 +57,6 @@ public class LeaderboardsActivity extends AppCompatActivity {
 
             }
         });
-       /* databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot dataSnapshotTop10User : dataSnapshot.child("users").getChildren()){
-                    if(topAdapter.getItemCount()>9) {
-                        break;
-                    }
-                        String username = (String) dataSnapshotTop10User.child("username").getValue();
-                        Long score = (Long) dataSnapshotTop10User.child("score").getValue();
-                        listaScoruri.add(username + " " + score.toString());
-                        topAdapter.notifyItemInserted(topAdapter.getItemCount());
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    */
     }
 
     public void createMesajeView(){
