@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
@@ -34,25 +35,21 @@ public class LeaderboardsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.leaderboards_activity);
 
-        //listaScoruri.add("Alex 2000");
-
         createMesajeView();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference();
 
-        //databaseReference.child("top10").child("id2").setValue(new User("Andrei", 2000)); //schimba sau, daca nu exista, adauga un copil cu numele id2, copil care are ca valori(copii) string Andrei si int 2000;
-        //databaseReference.child("users").child("Flavius890").setValue(new User("Flaviu", 0)); adauga user nou, teoretic trebuie tranzactie pentru cazul in care 2 clienti se inreg cu acelasi username deodata
-
         //citire baza de date si afisare top 10;
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query myTopUsersQuery = databaseReference.child("users").orderByChild("score").limitToLast(10);
+        myTopUsersQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot dataSnapshotTop10User : dataSnapshot.child("top10").getChildren()){ //navighez la nodul "top10" si i-au pe rand toate nodurile(userii) acestuia
-                    String username =(String) dataSnapshotTop10User.child("username").getValue();
+                for(DataSnapshot dataSnapshotTop10User : dataSnapshot.getChildren()){
+                    String username = (String) dataSnapshotTop10User.child("username").getValue();
                     Long score = (Long) dataSnapshotTop10User.child("score").getValue();
-                    listaScoruri.add(username + " " + score.toString());
-                    topAdapter.notifyItemInserted(topAdapter.getItemCount());
+                    listaScoruri.add(0, username + " " + score.toString());
+                    topAdapter.notifyItemInserted(0);
                 }
             }
 
@@ -61,7 +58,27 @@ public class LeaderboardsActivity extends AppCompatActivity {
 
             }
         });
+       /* databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshotTop10User : dataSnapshot.child("users").getChildren()){
+                    if(topAdapter.getItemCount()>9) {
+                        break;
+                    }
+                        String username = (String) dataSnapshotTop10User.child("username").getValue();
+                        Long score = (Long) dataSnapshotTop10User.child("score").getValue();
+                        listaScoruri.add(username + " " + score.toString());
+                        topAdapter.notifyItemInserted(topAdapter.getItemCount());
 
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    */
     }
 
     public void createMesajeView(){
