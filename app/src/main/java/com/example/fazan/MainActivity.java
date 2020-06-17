@@ -1,8 +1,7 @@
 package com.example.fazan;
 
-import android.app.Activity;
+import android.animation.ObjectAnimator;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
@@ -33,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     Credentials userCredentials;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference databaseReference = database.getReference();
+    DisplayUserDataFragment fragment;
+    Boolean fragmentAfisat=false;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +44,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity);
 
         user = new User();
+        fragment = new DisplayUserDataFragment();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragment.setActiuneButtonFragmentApasat(new Action() {
+            @Override
+            public void perform() {
+                if(fragmentAfisat){
+                    fragmentAfisat = false;
+                    ObjectAnimator animation1 = ObjectAnimator.ofFloat(findViewById(R.id.frameLayoutFragment), "translationX", -15);
+                    animation1.setDuration(1000);
+                    animation1.start();
+                }else {
+                    fragmentAfisat = true;
+                    ObjectAnimator animation = ObjectAnimator.ofFloat(findViewById(R.id.frameLayoutFragment), "translationX", -300);
+                    animation.setDuration(1000);
+                    animation.start();
+
+                }
+            }
+        });
+        fragmentTransaction.add(R.id.frameLayoutFragment, fragment);
+        fragmentTransaction.commit();
 
         findViewById(R.id.buttonPlay).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,12 +136,16 @@ public class MainActivity extends AppCompatActivity {
                                                         if (dataSnapshot.child("users").hasChild(user.userId)) {
                                                             user.score = (long) dataSnapshot.child("users").child(user.userId).child("score").getValue();
                                                             user.username = (String) dataSnapshot.child("users").child(user.userId).child("username").getValue();
+                                                            fragment.changeTextInTextViewUsername(user.username);
+                                                            fragment.changeTextInTextViewScore(Integer.valueOf((int)user.score).toString());
 
                                                         } else {
                                                             Log.e("else", "else else");
                                                             databaseReference.child("users").child(user.userId).setValue(new User(user.userId, 0, null));
                                                             user.username = user.userId;
                                                             user.score = 0;
+                                                            fragment.changeTextInTextViewUsername(user.username);
+                                                            fragment.changeTextInTextViewScore(Integer.valueOf((int)user.score).toString());
                                                         }
                                                     }
 
@@ -162,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
             user.username = results.getString("Username");
             Log.e("Result", user.username);
             databaseReference.child("users").child(user.userId).child("username").setValue(user.username);
+            fragment.changeTextInTextViewUsername(user.username);
         }
 
     }

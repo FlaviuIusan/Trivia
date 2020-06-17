@@ -1,5 +1,6 @@
 package com.example.fazan;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,17 +41,46 @@ public class PlayActivity extends AppCompatActivity {
     MesajeAdapter mesajeAdapter;
     CommunicationService communicationService;
     User user;
+    DisplayUserDataFragment fragment;
+    Boolean fragmentAfisat=false;
+    RecyclerView recyclerView;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.play_activity);
-
         Bundle extras = getIntent().getExtras();
         user = (User) extras.getSerializable("User Data");
+        fragment = new DisplayUserDataFragment();
 
         Toast.makeText(PlayActivity.this, user.username + user.score, Toast.LENGTH_SHORT).show();
+
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragment.setActiuneButtonFragmentApasat(new Action() {
+            @Override
+            public void perform() {
+                if(fragmentAfisat){
+                    fragmentAfisat = false;
+                    ObjectAnimator animation1 = ObjectAnimator.ofFloat(findViewById(R.id.frameLayoutFragment), "translationX", -15);
+                    animation1.setDuration(1000);
+                    animation1.start();
+                }else {
+                    fragmentAfisat = true;
+                    ObjectAnimator animation = ObjectAnimator.ofFloat(findViewById(R.id.frameLayoutFragment), "translationX", -300);
+                    animation.setDuration(1000);
+                    animation.start();
+                    fragment.changeTextInTextViewUsername(user.username);
+                    fragment.changeTextInTextViewScore(Integer.valueOf((int)user.score).toString());
+
+                }
+            }
+        });
+        fragmentTransaction.add(R.id.frameLayoutFragment, fragment);
+        fragmentTransaction.commit();
+
 
         listaMesaje.add("Jocul a inceput !!!");
 
@@ -99,7 +131,7 @@ public class PlayActivity extends AppCompatActivity {
 
     public void createMesajeView(){
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mesajeAdapter = new MesajeAdapter();
         mesajeAdapter.setListaMesaje(listaMesaje);
@@ -108,9 +140,10 @@ public class PlayActivity extends AppCompatActivity {
 
 
     public void listenToBroadcasts(){
-        BroadcastReceiver BroadcastReceiver = new PlayActivityBReceiver(mesajeAdapter);
+        BroadcastReceiver BroadcastReceiver = new PlayActivityBReceiver(mesajeAdapter, user, fragment, recyclerView);
         IntentFilter filter = new IntentFilter();
         filter.addAction("RefreshMesajeView");
+        filter.addAction("UpdateUserScore");
         PlayActivity.this.registerReceiver(BroadcastReceiver, filter);
     }
 

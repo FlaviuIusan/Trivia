@@ -63,13 +63,19 @@ public class CommunicationService extends Service {
                     String line;
                     if(get != null) {
                         if ((line = get.readLine()) != null) {
+                            if(line.toString().compareTo("Server: " + user.userId + " a raspuns corect !!!")==0){
+                                Intent intent = new Intent();
+                                intent.setAction("UpdateUserScore");
+                                sendBroadcast(intent);
+                            }
+                            else {
+                                Log.e("listenRunFunc", "Mesajul primit este " + line);
+                                listaMesaje.add(line);
 
-                            Log.e("listenRunFunc", "Mesajul primit este " + line);
-                            listaMesaje.add(line);
-
-                            Intent intent = new Intent();
-                            intent.setAction("RefreshMesajeView");
-                            sendBroadcast(intent);
+                                Intent intent = new Intent();
+                                intent.setAction("RefreshMesajeView");
+                                sendBroadcast(intent);
+                            }
                         }
                             Log.e("listenRunFunc", "Mesajul a fos null");
                     }
