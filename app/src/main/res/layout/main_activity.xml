@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/imageproxy"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -12,6 +13,7 @@
         android:id="@+id/buttonLoginRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_light_transparent"
         android:text="Login/Register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,6 +25,7 @@
         android:id="@+id/buttonPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_light_transparent"
         android:layout_marginTop="20dp"
         android:text="Play"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,6 +36,7 @@
         android:id="@+id/buttonLeaderboards"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_light_transparent"
         android:layout_marginTop="20dp"
         android:text="Leaderboards"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,6 +47,7 @@
         android:id="@+id/buttonAccountSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_light_transparent"
         android:layout_marginTop="20dp"
         android:text="Account Settings"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,7 +57,7 @@
     <FrameLayout
         android:id="@+id/frameLayoutFragment"
         android:layout_width="165dp"
-        android:layout_height="40dp"
+        android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.6"

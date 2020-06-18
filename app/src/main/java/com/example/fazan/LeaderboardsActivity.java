@@ -47,7 +47,7 @@ public class LeaderboardsActivity extends AppCompatActivity {
                 for(DataSnapshot dataSnapshotTop10User : dataSnapshot.getChildren()){
                     String username = (String) dataSnapshotTop10User.child("username").getValue();
                     Long score = (Long) dataSnapshotTop10User.child("score").getValue();
-                    listaScoruri.add(0, username + " " + score.toString());
+                    listaScoruri.add(0, "Username: " + username + " |"+ "Score: " + score.toString());
                     topAdapter.notifyItemInserted(0);
                 }
             }
