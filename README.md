@@ -3,6 +3,8 @@ Vezi fisierul DocumentatieTrivia.pdf, in acesta prezint in deatliu componentele 
 
 Vezi fisierul PrezentareTrivia.pdf, in acesta prezint pe scurt functionalitatile aplicatiei.
 
+Aceasta aplicatie trebuie rulata impreuna cu [aplicatia ServerTrivia](https://github.com/Flavius890/ServerTrivia).
+
 Meniul principal al aplicatiei:
 
 ![alt text](https://github.com/Flavius890/Trivia/blob/master/MainActivity.JPG)
