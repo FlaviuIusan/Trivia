@@ -1,7 +1,7 @@
 # Trivia
-Vezi fisierul DocumentatieTrivia.pdf, in acesta prezint in deatliu componentele aplicatiei.
+Vezi fisierul [DocumentatieTrivia.pdf](https://github.com/Flavius890/Trivia/blob/master/DocumentatieTrivia3.pdf), in acesta prezint in detaliu componentele aplicatiei.
 
-Vezi fisierul PrezentareTrivia.pdf, in acesta prezint pe scurt functionalitatile aplicatiei.
+Vezi fisierul [PrezentareTrivia.pdf](https://github.com/Flavius890/Trivia/blob/master/PrezentareTrivia.pdf), in acesta prezint pe scurt functionalitatile aplicatiei.
 
 Aceasta aplicatie trebuie rulata impreuna cu [aplicatia ServerTrivia](https://github.com/Flavius890/ServerTrivia).
 
